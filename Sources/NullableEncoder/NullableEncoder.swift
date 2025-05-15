@@ -4,15 +4,15 @@
 import Foundation
 
 @propertyWrapper
-struct NullIfEmpty<T> {
-    var wrappedValue: T?
-    init(wrappedValue: T? = nil) {
+public struct NullIfEmpty<T> {
+    public var wrappedValue: T?
+    public init(wrappedValue: T? = nil) {
         self.wrappedValue = wrappedValue
     }
 }
 
 extension NullIfEmpty: Encodable where T: Encodable {
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         if T.Type.self == String.Type.self {
             if(wrappedValue != nil) {
@@ -36,7 +36,7 @@ extension NullIfEmpty: Encodable where T: Encodable {
 }
 
 extension NullIfEmpty: Decodable where T: Decodable {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.wrappedValue = try? container.decode(T.self)
     }
