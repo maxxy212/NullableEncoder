@@ -1,6 +1,8 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+import Foundation
+
 @propertyWrapper
 struct NullIfEmpty<T> {
     var wrappedValue: T?
@@ -37,5 +39,32 @@ extension NullIfEmpty: Decodable where T: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.wrappedValue = try? container.decode(T.self)
+    }
+}
+
+internal extension Encodable {
+    func dataPrettyPrinted() throws -> Data {
+        try JSONEncoder.iso8601PrettyPrinted.encode(self)
+    }
+    
+    func jsonPrettyPrinted() throws -> String {
+        String(data: try dataPrettyPrinted(), encoding: .utf8) ?? ""
+    }
+}
+
+internal extension JSONEncoder {
+    static let shared = JSONEncoder()
+    static let iso8601 = JSONEncoder(dateEncodingStrategy: .iso8601)
+    static let iso8601PrettyPrinted = JSONEncoder(dateEncodingStrategy: .iso8601, outputFormatting: .prettyPrinted)
+}
+
+internal extension JSONEncoder {
+    convenience init(dateEncodingStrategy: DateEncodingStrategy,
+                         outputFormatting: OutputFormatting = [],
+                      keyEncodingStrategy: KeyEncodingStrategy = .useDefaultKeys) {
+        self.init()
+        self.dateEncodingStrategy = dateEncodingStrategy
+        self.outputFormatting = outputFormatting
+        self.keyEncodingStrategy = keyEncodingStrategy
     }
 }
