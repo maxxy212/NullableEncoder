@@ -4,24 +4,24 @@
 import Foundation
 
 @propertyWrapper
-public struct NullIfEmpty<T> {
+public struct NullIfEmpty<T>: Sendable where T: Sendable {
     public var wrappedValue: T?
     public init(wrappedValue: T? = nil) {
         self.wrappedValue = wrappedValue
     }
 }
 
-extension NullIfEmpty: Encodable where T: Encodable {
+extension NullIfEmpty: Encodable where T: Encodable & Sendable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         if T.Type.self == String.Type.self {
-            if(wrappedValue != nil) {
-                if(wrappedValue as! String).isEmpty {
+            if let string = wrappedValue as? String {
+                if string.isEmpty {
                     try container.encodeNil()
-                }else {
+                } else {
                     try container.encode(wrappedValue)
                 }
-            }else {
+            } else {
                 try container.encodeNil()
             }
         }else {
@@ -35,7 +35,7 @@ extension NullIfEmpty: Encodable where T: Encodable {
     }
 }
 
-extension NullIfEmpty: Decodable where T: Decodable {
+extension NullIfEmpty: Decodable where T: Decodable & Sendable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.wrappedValue = try? container.decode(T.self)
