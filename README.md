@@ -1,6 +1,6 @@
 ## Up Next: Version 1.0.2
 
-🎯 Version 1.0.2 is planned as the first major release.
+🎯 Version 1.0.2.
 - Performance improvements
 - Finalized documentation
 
